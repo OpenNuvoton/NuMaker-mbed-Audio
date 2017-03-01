@@ -15,18 +15,18 @@ This library contains mbed implementation of NuMaker Audio I2S and Codec.
     ```
 1. Attach callback function.
 
-    ...
+    ```
     audio.attach(&play);
-    ...
+    ```
     
 1. Start audio.
 
-    ...
+    ```
     audio.start();
-    ...
+    ```
     
 1. Write PCM data to audio.
 
-    ...
+    ```
     audio.write
-    ...
+    ```
