@@ -70,8 +70,8 @@ void NAU8822L::power(void) {
     I2C_WriteNAU8822(50, 0x001);   /* Left DAC connected to LMIX */
     I2C_WriteNAU8822(51, 0x001);   /* Right DAC connected to RMIX */
 
-    I2C_WriteNAU8822(0x34, 0x13F);
-    I2C_WriteNAU8822(0x35, 0x13F);
+    I2C_WriteNAU8822(0x34, 0x129);
+    I2C_WriteNAU8822(0x35, 0x129);
 #if 0   //input source is MIC
     I2C_WriteNAU8822(1,  0x03F);
     I2C_WriteNAU8822(2,  0x1BF);   /* Enable L/R Headphone, ADC Mix/Boost, ADC */
