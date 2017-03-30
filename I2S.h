@@ -30,12 +30,18 @@ class I2S
         void write(int* buffer, int from,  int length);
         void read(void);
         void attach(void(*fptr)(void));
+        void attach(Callback<void()> func);
         int  status(void);
         void format(int rate, char count, char length);
         
-        int rxBuffer[4];
+        int  rxBuffer[4];
         
     private:
+        void m_i2s_irq(void);
+        
+        Callback<void()>    m_i2s_callback;
+        CThunk<I2S>         m_i2s_irq_thunk;
+        
         int  m_samplingRate;
         char m_channelCount;
         char m_sampleBitLength;
