@@ -72,6 +72,6 @@ This library contains mbed implementation of NuMaker Audio I2S and Codec.
 1. Use FFmpeg to convert a PCM file.
     
     ```
-ffmpeg.exe -hide_banner -i audio_file -map_metadata -1 -flags +bitexact -vn -sn -c:a pcm_s16le -ac 1 -ar 8000 -f s16le test.pcm
+    ffmpeg.exe -hide_banner -i audio_file -map_metadata -1 -flags +bitexact -vn -sn -c:a pcm_s16le -ac 1 -ar 8000 -f s16le test.pcm
     ```
     
