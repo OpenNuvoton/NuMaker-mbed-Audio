@@ -33,9 +33,10 @@ class NAU8822L
         void write(int *buffer, int from, int length);
         void read(void);
         void attach(void(*fptr)(void));
+        void attach(Callback<void()> func);
         void format(int rate, char count, char length);
         
-        int *rxBuffer;
+        int  *rxBuffer;
         
     private:
         int  m_addr;
