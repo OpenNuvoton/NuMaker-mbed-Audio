@@ -18,19 +18,10 @@
 
 #include "I2S.h"
 
-FunctionPointer testCallback;
+static void donothing() {}
 
-#if defined(TARGET_NUMAKER_PFM_NUC472)
-extern "C" void I2S1_IRQHandler(void) {
-    testCallback.call();
-}
-#elif defined(TARGET_NUMAKER_PFM_M453)
-extern "C" void SPI1_IRQHandler(void) {
-    testCallback.call();
-}
-#endif
-
-I2S::I2S(PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk) {
+I2S::I2S(PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk) :
+            m_i2s_irq_thunk(this, &I2S::m_i2s_irq) {
     m_masterMode = 0; // i2s as slave mode
     
 #if defined(TARGET_NUMAKER_PFM_NUC472)
@@ -80,7 +71,8 @@ I2S::I2S(PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, Pin
 #endif
 }
 
-I2S::I2S(PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk, char i2s_master_enable) {
+I2S::I2S(PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk, char i2s_master_enable) :
+            m_i2s_irq_thunk(this, &I2S::m_i2s_irq) {
     /* FIXME */
     m_masterMode = i2s_master_enable;
     
@@ -168,7 +160,7 @@ void I2S::start(void) {
         I2S_EnableMCLK(I2S1, m_samplingRate * 256);
     }
     
-    NVIC_SetVector(I2S1_IRQn, (uint32_t)I2S1_IRQHandler);
+    NVIC_SetVector(I2S1_IRQn, m_i2s_irq_thunk.entry());
     NVIC_EnableIRQ(I2S1_IRQn);
     
     /* Enable Tx threshold level interrupt */
@@ -188,7 +180,7 @@ void I2S::start(void) {
         I2S_EnableMCLK(SPI1, m_samplingRate * 256);
     }
     
-    NVIC_SetVector(SPI1_IRQn, (uint32_t)SPI1_IRQHandler);
+    NVIC_SetVector(SPI1_IRQn, m_i2s_irq_thunk.entry());
     
     /* Start I2S play iteration */
     I2S_EnableInt(SPI1, I2S_FIFO_TXTH_INT_MASK);
@@ -235,7 +227,7 @@ void I2S::record(void) {
         I2S_EnableMCLK(I2S1, m_samplingRate * 256);
     }
     
-    NVIC_SetVector(I2S1_IRQn, (uint32_t)I2S1_IRQHandler);
+    NVIC_SetVector(I2S1_IRQn, m_i2s_irq_thunk.entry());
     NVIC_EnableIRQ(I2S1_IRQn);
     
     /* Enable Rx threshold level interrupt */
@@ -255,7 +247,7 @@ void I2S::record(void) {
         I2S_EnableMCLK(SPI1, m_samplingRate * 256);
     }
     
-    NVIC_SetVector(SPI1_IRQn, (uint32_t)SPI1_IRQHandler);
+    NVIC_SetVector(SPI1_IRQn, m_i2s_irq_thunk.entry());
     
     /* Start I2S record iteration */
     I2S_EnableInt(SPI1, I2S_FIFO_RXTH_INT_MASK);
@@ -295,7 +287,23 @@ void I2S::read(void) {
 }
 
 void I2S::attach(void(*fptr)(void)) {
-    testCallback.attach(fptr);
+//    lock();
+    if (fptr) {
+        m_i2s_callback.attach(fptr);
+    } else {
+        m_i2s_callback.attach(donothing);
+    }
+//    unlock();
+}
+
+void I2S::attach(Callback<void()> func) {
+//    lock();
+    if (func) {
+        m_i2s_callback.attach(func);
+    } else {
+        m_i2s_callback.attach(donothing);
+    }
+//    unlock();
 }
 
 int I2S::status(void) {
@@ -310,4 +318,8 @@ void I2S::format(int rate, char count, char length) {
     m_samplingRate    = rate;
     m_channelCount    = count;
     m_sampleBitLength = length;
+}
+
+void I2S::m_i2s_irq(void) {
+    m_i2s_callback.call();
 }
