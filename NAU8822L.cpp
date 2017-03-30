@@ -146,6 +146,10 @@ void NAU8822L::attach(void(*fptr)(void)) {
     m_I2S.attach(fptr);
 }
 
+void NAU8822L::attach(Callback<void()> func) {
+    m_I2S.attach(func);
+}
+
 void NAU8822L::format(int rate, char count, char length) {
     int  clockControl;
     char monoOperationEnable;
@@ -241,6 +245,7 @@ void NAU8822L::format(int rate, char count, char length) {
             break;
     }
     
+    clockControl = 0;
     clockControl = (clockControl & 0x0FF);
     clockControl = (clockControl & 0x1FE);
     if (m_masterMode) {
