@@ -24,8 +24,8 @@
 class NAU8822L
 {        
     public:
-        NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk);
-        NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk, char i2s_master_enable, char codec_master_enable);
+        NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck);
+        NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck, char i2s_master_enable, char codec_master_enable);
         void power(void);
         void start(void);
         void record(void);
@@ -35,6 +35,10 @@ class NAU8822L
         void attach(void(*fptr)(void));
         void attach(Callback<void()> func);
         void format(int rate, char count, char length);
+        void lock(void);
+        void unlock(void);
+        void loopback(void);
+        void readwrite(void);
         
         int  *rxBuffer;
         
@@ -42,8 +46,8 @@ class NAU8822L
         int  m_addr;
         char m_masterMode;
         
-        I2C m_I2C;
-        I2S m_I2S;
+        I2C         m_I2C;
+        NuI2SDevice m_I2S;
         
         void I2C_WriteNAU8822(uint8_t u8addr, uint16_t u16data);
         

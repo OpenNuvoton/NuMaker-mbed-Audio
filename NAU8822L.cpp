@@ -18,8 +18,8 @@
 
 #include "NAU8822L.h"
 
-NAU8822L::NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk)
-                         : m_addr(i2c_addr), m_I2C(i2c_sda, i2c_scl), m_I2S(i2s_tx, i2s_rx, i2s_bclk, i2s_mclk, i2s_lrclk) {
+NAU8822L::NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck)
+                         : m_addr(i2c_addr), m_I2C(i2c_sda, i2c_scl), m_I2S(i2s_do, i2s_di, i2s_bclk, i2s_mclk, i2s_lrck) {
     m_I2C.frequency(100000);
     m_masterMode = 1;    // codec is master mode and i2s is slave mode
     power();
@@ -27,8 +27,8 @@ NAU8822L::NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_t
     rxBuffer = &m_I2S.rxBuffer[0];
 }
 
-NAU8822L::NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_tx, PinName i2s_rx, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrclk, char i2s_master_enable, char codec_master_enable)
-                         : m_addr(i2c_addr), m_I2C(i2c_sda, i2c_scl), m_I2S(i2s_tx, i2s_rx, i2s_bclk, i2s_mclk, i2s_lrclk, i2s_master_enable) {
+NAU8822L::NAU8822L(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck, char i2s_master_enable, char codec_master_enable)
+                         : m_addr(i2c_addr), m_I2C(i2c_sda, i2c_scl), m_I2S(i2s_do, i2s_di, i2s_bclk, i2s_mclk, i2s_lrck, i2s_master_enable) {
     m_I2C.frequency(100000);
     m_masterMode = codec_master_enable;
     power();
@@ -265,4 +265,20 @@ void NAU8822L::format(int rate, char count, char length) {
     } else {
         m_I2S.format(rate, 1, length);;
     }
+}
+
+void NAU8822L::lock(void) {
+    m_I2S.lock();
+}
+
+void NAU8822L::unlock(void) {
+    m_I2S.unlock();
+}
+
+void NAU8822L::loopback(void) {
+    m_I2S.loopback();
+}
+
+void NAU8822L::readwrite(void) {
+    m_I2S.readwrite();
 }

@@ -1,18 +1,21 @@
 # NuMaker-mbed-Audio
-This library contains mbed implementation of NuMaker Audio I2S and Codec.
+This library contains Mbed implementation of NuMaker Audio I2S and Codec.
 
 ### Example: Play PCM data from SD card
 
-1. Declare NuSDFileSystem.
+1. Declare NuSDBlockDevice and FATFileSystem.
     
     ```
-    NuSDFileSystem Nu_SD   // the pinout on the mbed Cool Components workshop board
+    NuSDBlockDevice bd   // device SD driver
+    FATFileSystem fs     // Mbed FAT file system
     ```
     
 1. Declare audio.
     
     ```
-    NAU8822L audio  // NAU8822L object, I2C pinout, address, I2S pinout
+    NAU8822L audio  // NAU8822L object, I2C pinout/address and I2S pinout
+    or
+    NAU88L25 audio  // NAU88L25 object, I2C pinout/address and I2S pinout
     ```
     
 1. Attach callback function for playing.

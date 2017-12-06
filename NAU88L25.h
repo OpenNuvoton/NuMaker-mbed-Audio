@@ -14,54 +14,43 @@
  * limitations under the License.
  */
 
-#ifndef __MBED_I2S_H__
-#define __MBED_I2S_H__
+#ifndef MBED_NAU88L25_H
+#define MBED_NAU88L25_H
 
 #include "mbed.h"
 
-struct nu_modinit_s;
+#include "I2S.h"
 
-class NuI2SDevice
-{
+class NAU88L25
+{        
     public:
-        NuI2SDevice(PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck);
-        NuI2SDevice(PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck, char i2s_master_enable);
+        NAU88L25(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck);
+        NAU88L25(PinName i2c_sda, PinName i2c_scl, int i2c_addr, PinName i2s_do, PinName i2s_di, PinName i2s_bclk, PinName i2s_mclk, PinName i2s_lrck, char i2s_master_enable, char codec_master_enable);
+        void power(void);
         void start(void);
         void record(void);
         void stop(void);
-        void write(int* buffer, int from,  int length);
+        void write(int *buffer, int from, int length);
         void read(void);
         void attach(void(*fptr)(void));
         void attach(Callback<void()> func);
-        int  status(void);
-        int  status1(void);
         void format(int rate, char count, char length);
         void lock(void);
         void unlock(void);
         void loopback(void);
         void readwrite(void);
         
-        int  rxBuffer[8];
+        int  *rxBuffer;
         
     private:
-        void m_i2s_irq(void);
-        
-        Callback<void()>        m_i2s_callback;
-        CThunk<NuI2SDevice>     m_i2s_irq_thunk;
-        
-        int  m_samplingRate;
-        char m_channelCount;
-        char m_sampleBitLength;
+        int  m_addr;
         char m_masterMode;
         
-        const struct nu_modinit_s * _i2s_modinit;
-        /* TODO M487 SPI for I2S */
-        #if defined(TARGET_NUMAKER_PFM_NUC472) || defined(TARGET_NUMAKER_PFM_M487) || defined(TARGET_NUMAKER_PFM_NANO130)
-        I2S_T * _i2s_base;
-        #elif defined(TARGET_NUMAKER_PFM_M453)
-        SPI_T * _i2s_base;
-        #endif
+        I2C         m_I2C;
+        NuI2SDevice m_I2S;
+        
+        void I2C_WriteNAU88L25(uint16_t u16addr, uint16_t u16data);
         
 };
 
-#endif /*__MBED_I2S_H__*/
+#endif
