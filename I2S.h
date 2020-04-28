@@ -56,7 +56,7 @@ class NuI2SDevice
         
         const struct nu_modinit_s * _i2s_modinit;
         /* TODO M487 SPI for I2S */
-        #if defined(TARGET_NUMAKER_PFM_NUC472) || defined(TARGET_NUMAKER_PFM_M487) || defined(TARGET_NUMAKER_PFM_NANO130)
+        #if defined(TARGET_NUMAKER_PFM_NUC472) || defined(TARGET_NUMAKER_PFM_M487) || defined(TARGET_NUMAKER_PFM_NANO130) || defined(TARGET_NUMAKER_IOT_M487)
         I2S_T * _i2s_base;
         #elif defined(TARGET_NUMAKER_PFM_M453)
         SPI_T * _i2s_base;
