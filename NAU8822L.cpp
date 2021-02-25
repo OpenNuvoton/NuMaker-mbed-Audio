@@ -59,9 +59,18 @@ void NAU8822L::power(void) {
 //    printf("\nConfigure NAU8822 ...\n");
     
     I2C_WriteNAU8822(0,  0x000);   /* Reset all registers */
+
+#if MBED_MAJOR_VERSION >= 6
+    ThisThread::sleep_for(500);
+#else
     Thread::wait(500);
+#endif
     I2C_WriteNAU8822(0,  0x000);   /* Reset all registers */
+#if MBED_MAJOR_VERSION >= 6
+    ThisThread::sleep_for(500);
+#else
     Thread::wait(500);
+#endif
     
 #if 0
 //#ifdef INPUT_IS_AUXIN //input source is AUXIN

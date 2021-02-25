@@ -63,7 +63,11 @@ void NAU88L25::power(void) {
 //    printf("\nConfigure NAU88L25 ...\n");
     
     I2C_WriteNAU88L25( 0x0000, 0x0000 );   /* Reset all registers */
+#if MBED_MAJOR_VERSION >= 6
+    ThisThread::sleep_for(10);
+#else
     Thread::wait(10);
+#endif
     //I2C_WriteNAU88L25( 0x0000, 0x0000 );   /* Reset all registers */
     //Thread::wait(500);
     
